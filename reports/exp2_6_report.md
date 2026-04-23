@@ -12,11 +12,11 @@
 - Метрики:
   - регрессия: MSE (при необходимости MAE),
   - классификация: Accuracy.
-- Железо: CPU `<...>`, RAM `<...>`.
+- Железо: AMD Ryzen 5 5600H, RAM 16Gb.
 
 ## 3. Результаты
-- `fig/exp2_6_opt_vs_quality_regression.png`
-- `fig/exp2_6_opt_vs_quality_classification.png`
+- ![](../fig/exp2_6_opt_vs_quality_regression.png)
+- ![](../fig/exp2_6_opt_vs_quality_classification.png)
 - Формат графиков:
   - левая ось (log): `f_train(x_k)` и `||∇f(x_k)||`,
   - правая ось: тестовая метрика.
