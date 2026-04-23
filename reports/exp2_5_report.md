@@ -9,10 +9,10 @@
 - Датасет: LIBSVM `a9a`.
 - Методы: NLCG, HFN, L-BFGS.
 - Параметры line search: Wolfe.
-- Железо: CPU `<...>`, RAM `<...>`.
+- Железо: AMD Ryzen 5 5600H, RAM 16Gb.
 
 ## 3. Результаты
-- `fig/exp2_5_microprofiling.png`
+- ![](../fig/exp2_5_microprofiling.png)
 - На графике показаны доли/вклад времени по компонентам.
 
 ## 4. Выводы
