@@ -129,9 +129,9 @@ def nonlinear_conjugate_gradients(oracle, x_0, tolerance=1e-4, max_iter=500,
     start_time = time.perf_counter()
 
     g_k = oracle.grad(x_k)
-    g0_norm_sq = np.dot(g_k, g_k)
-    if g0_norm_sq == 0:
-        g0_norm_sq = 1.0
+    gs_norm = np.dot(g_k, g_k)
+    if gs_norm == 0:
+        gs_norm = 1.0
     d_k = -g_k
     alpha_prev = None
 
@@ -146,7 +146,7 @@ def nonlinear_conjugate_gradients(oracle, x_0, tolerance=1e-4, max_iter=500,
     push_history()
 
     for _ in range(max_iter):
-        if np.dot(g_k, g_k) <= tolerance * g0_norm_sq:
+        if np.dot(g_k, g_k) <= tolerance * gs_norm:
             return x_k, 'success', history
 
         if np.dot(g_k, d_k) >= 0:
@@ -228,9 +228,9 @@ def lbfgs(oracle, x_0, tolerance=1e-4, max_iter=500, memory_size=10,
     alpha_prev = None
 
     g_k = oracle.grad(x_k)
-    g0_norm_sq = np.dot(g_k, g_k)
-    if g0_norm_sq == 0:
-        g0_norm_sq = 1.0
+    gs_norm = np.dot(g_k, g_k)
+    if gs_norm == 0:
+        gs_norm = 1.0
 
     def push_history():
         if trace:
@@ -264,7 +264,7 @@ def lbfgs(oracle, x_0, tolerance=1e-4, max_iter=500, memory_size=10,
 
     push_history()
     for _ in range(max_iter):
-        if np.dot(g_k, g_k) <= tolerance * g0_norm_sq:
+        if np.dot(g_k, g_k) <= tolerance * gs_norm:
             return x_k, 'success', history
 
         d_k = lbfgs_direction(g_k)
@@ -340,9 +340,9 @@ def hessian_free_newton(oracle, x_0, tolerance=1e-4, max_iter=500,
     start_time = time.perf_counter()
 
     g_k = oracle.grad(x_k)
-    g0_norm_sq = np.dot(g_k, g_k)
-    if g0_norm_sq == 0:
-        g0_norm_sq = 1.0
+    gs_norm = np.dot(g_k, g_k)
+    if gs_norm == 0:
+        gs_norm = 1.0
 
     def push_history():
         if trace:
@@ -356,7 +356,7 @@ def hessian_free_newton(oracle, x_0, tolerance=1e-4, max_iter=500,
 
     for _ in range(max_iter):
         g_norm = np.linalg.norm(g_k)
-        if g_norm ** 2 <= tolerance * g0_norm_sq:
+        if g_norm ** 2 <= tolerance * gs_norm:
             return x_k, 'success', history
 
         eta_k = min(0.5, np.sqrt(g_norm))
