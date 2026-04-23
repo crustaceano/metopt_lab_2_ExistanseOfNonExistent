@@ -72,19 +72,19 @@ class NonConvexOracle(BaseSmoothOracle):
     """
 
     def __init__(self):
-	pass
+        pass
 
     def func(self, x):
-        # TODO
+        return np.sum(0.25 * x ** 4 - 0.5 * x ** 2)
 
     def grad(self, x):
-        # TODO
+        return x ** 3 - x
 
     def hess(self, x):
-        # TODO
+        return np.diag(3.0 * x ** 2 - 1.0)
 
     def hess_vec(self, x, v):
- 	# TODO
+        return (3.0 * x ** 2 - 1.0) * v
 
 
 class REG_MODEL_NAMEL2Oracle(BaseSmoothOracle):
@@ -112,24 +112,26 @@ class REG_MODEL_NAMEL2Oracle(BaseSmoothOracle):
         self.regcoef = regcoef
 
     def func(self, x):
-        # TODO: Implement
-        return None
+        Ax_minus_b = self.matvec_Ax(x) - self.b
+        m = self.b.size
+        return 0.5 / m * np.dot(Ax_minus_b, Ax_minus_b) + 0.5 * self.regcoef * np.dot(x, x)
 
     def grad(self, x):
-        # TODO: Implement
-        return None
+        Ax_minus_b = self.matvec_Ax(x) - self.b
+        m = self.b.size
+        return self.matvec_ATx(Ax_minus_b) / m + self.regcoef * x
 
     def hess(self, x):
-        # TODO: Implement
-        return None
+        m = self.b.size
+        n = x.size
+        return self.matmat_ATsA(np.ones(m)) / m + self.regcoef * np.eye(n)
 
     def hess_vec(self, x, v):
         """
         Computes matrix-vector product with Hessian matrix f''(x) v.
         """
-        # TODO: Implement matrix-vector product f''(x) v WITHOUT explicitly building
-        # the full Hessian matrix (to be fast and efficient for Truncated Newton).
-        return super().hess_vec(x, v)
+        m = self.b.size
+        return self.matvec_ATx(self.matvec_Ax(v)) / m + self.regcoef * v
 
 
 class CLASS_MODEL_NAMEL2Oracle(BaseSmoothOracle):
@@ -157,24 +159,34 @@ class CLASS_MODEL_NAMEL2Oracle(BaseSmoothOracle):
         self.regcoef = regcoef
 
     def func(self, x):
-        # TODO: Implement
-        return None
+        z = self.b * self.matvec_Ax(x)
+        m = self.b.size
+        return np.mean(np.logaddexp(0.0, -z)) + 0.5 * self.regcoef * np.dot(x, x)
 
     def grad(self, x):
-        # TODO: Implement
-        return None
+        z = self.b * self.matvec_Ax(x)
+        m = self.b.size
+        sigma = expit(-z)
+        return -self.matvec_ATx(self.b * sigma) / m + self.regcoef * x
 
     def hess(self, x):
-        # TODO: Implement
-        return None
+        z = self.b * self.matvec_Ax(x)
+        m = self.b.size
+        sigma = expit(-z)
+        s = sigma * (1.0 - sigma)
+        n = x.size
+        return self.matmat_ATsA(s) / m + self.regcoef * np.eye(n)
 
     def hess_vec(self, x, v):
         """
         Computes matrix-vector product with Hessian matrix f''(x) v.
         """
-        # TODO: Implement matrix-vector product f''(x) v WITHOUT explicitly building
-        # the full Hessian matrix (to be fast and efficient for Truncated Newton).
-        return super().hess_vec(x, v)
+        z = self.b * self.matvec_Ax(x)
+        m = self.b.size
+        sigma = expit(-z)
+        s = sigma * (1.0 - sigma)
+        Av = self.matvec_Ax(v)
+        return self.matvec_ATx(s * Av) / m + self.regcoef * v
 
 
 def hess_vec_finite_diff(func, x, v, eps=1e-5):
@@ -182,7 +194,12 @@ def hess_vec_finite_diff(func, x, v, eps=1e-5):
     Returns approximation of the matrix product 'Hessian times vector'
     using finite differences.
     """
-    # TODO: Implement numerical estimation of the Hessian times vector
-    # using the formula from Section 1.4 of the PDF:
-    # [\nabla^2 f(x)v]_i \approx \frac{f(x + eps*v + eps*e_i) - f(x + eps*v) - f(x + eps*e_i) + f(x)}{eps^2}
-    return None
+    n = x.size
+    result = np.zeros_like(x, dtype=float)
+    fx = func(x)
+    fx_ev = func(x + eps * v)
+    for i in range(n):
+        e_i = np.zeros_like(x, dtype=float)
+        e_i[i] = 1.0
+        result[i] = (func(x + eps * v + eps * e_i) - fx_ev - func(x + eps * e_i) + fx) / (eps ** 2)
+    return result

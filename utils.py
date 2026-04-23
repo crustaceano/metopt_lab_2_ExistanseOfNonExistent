@@ -1,4 +1,5 @@
 import numpy as np
+from scipy.optimize import line_search
 
 class LineSearchTool(object):
     """
@@ -71,7 +72,49 @@ class LineSearchTool(object):
         alpha : float or None if failure
             Chosen step size
         """
-        # TODO: Implement line search procedures for Armijo, Wolfe and Constant steps.
+        if self._method == 'Constant':
+            return self.c
+
+        phi_0 = oracle.func_directional(x_k, d_k, 0.0)
+        derphi_0 = oracle.grad_directional(x_k, d_k, 0.0)
+        if derphi_0 >= 0:
+            return 0.0
+
+        alpha_start = previous_alpha if previous_alpha is not None else getattr(self, "alpha_0", 1.0)
+
+        if self._method == 'Wolfe':
+            alpha_wolfe, _, _, _, _, _ = line_search(
+                f=lambda x: oracle.func(x),
+                myfprime=lambda x: oracle.grad(x),
+                xk=x_k,
+                pk=d_k,
+                c1=self.c1,
+                c2=self.c2,
+            )
+            if alpha_wolfe is not None:
+                return alpha_wolfe
+            # Fallback to Armijo if Wolfe fails.
+            alpha = alpha_start
+            while alpha > 1e-16:
+                if oracle.func_directional(x_k, d_k, alpha) <= phi_0 + self.c1 * alpha * derphi_0:
+                    return alpha
+                alpha *= 0.5
+            return None
+
+        if self._method == 'Armijo':
+            alpha = alpha_start
+            while alpha > 1e-16:
+                if oracle.func_directional(x_k, d_k, alpha) <= phi_0 + self.c1 * alpha * derphi_0:
+                    return alpha
+                alpha *= 0.5
+            return None
+
+        if self._method == 'Best':
+            # "Best" may be provided by special oracles from previous labs.
+            if hasattr(oracle, "minimize_directional"):
+                return oracle.minimize_directional(x_k, d_k)
+            return None
+
         return None
 
 
