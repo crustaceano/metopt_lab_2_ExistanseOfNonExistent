@@ -2,18 +2,22 @@
 Продвинутые методы безусловной оптимизации
 
 ## 0. Организация работы
-- Состав команды: `<ФИО 1>`, `<ФИО 2>`, `<ФИО 3>`.
+Состав команды: Терентьев Иван Федорович, Тузов Михаил Олегович, Ахмедов Омар Али оглы
 - Распределение задач:
-  - `<ФИО 1>`: реализация `linear_conjugate_gradients`, `nonlinear_conjugate_gradients`, проверка корректности.
-  - `<ФИО 2>`: реализация `hessian_free_newton`, `lbfgs`, эксперименты `2.4`, `2.5`.
-  - `<ФИО 3>`: реализация оракулов (`LogCoshL2`, `ExponentialLossL2`, `hess_vec`), эксперименты `2.2`, `2.3`, `2.6`.
+ - `2_1` — все
+ - `2_2` — Михаил Тузов
+ - `2_3` — Иван Терентьев
+ - `2_4` — Ахмедов Омар / Михаил Тузов
+ - `2_5` — Иван Терентьев
+ - `2_6` — Ахмедов Омар
+ - `2_7` — все
 
 ## 1. Используемое окружение
 - Язык / библиотеки: Python, NumPy, SciPy, scikit-learn, Matplotlib.
 - Аппаратная платформа:  
-  - CPU: `<модель процессора>`  
-  - RAM: `<объем ОЗУ>`  
-  - OS: `<операционная система>`
+  - CPU: AMD Ryzen 5 5600H
+  - RAM: 16Gb
+  - OS: Windows11
 - Датасеты: LIBSVM, разреженный формат; для всех ML-экспериментов использованы разреженные матрицы `csr`.
 
 ---
@@ -37,7 +41,7 @@
   - критерий остановки: относительный по норме невязки/градиента.
 
 ### 2.2.3 Результаты
-- Рисунок 2.2-1: `fig/exp2_2_cg_vs_gd.png`
+- Рисунок 2.2-1: ![](../fig/exp2_2_cg_vs_gd.png)
   - Ось X: `cond(A)` (логарифмическая шкала),
   - Ось Y: число итераций (логарифмическая шкала),
   - отдельные кривые для CG и GD при разных `n`.
@@ -69,8 +73,8 @@
 - Размер истории: `L ∈ {0, 1, 5, 10, 50, 100}`.
 
 ### 3.3 Результаты
-- Рисунок 2.3-1: `fig/exp2_3_lbfgs_memory_regression.png`
-- Рисунок 2.3-2: `fig/exp2_3_lbfgs_memory_classification.png`
+- Рисунок 2.3-1: ![](../fig/exp2_3_lbfgs_memory_regression.png)
+- Рисунок 2.3-2: ![](../fig/exp2_3_lbfgs_memory_classification.png)
   - график `||∇f(x_k)||^2 / ||∇f(x_0)||^2` vs iteration (log-scale),
   - график `||∇f(x_k)||^2 / ||∇f(x_0)||^2` vs time (log-scale),
   - график итогового времени vs `L`.
@@ -106,14 +110,14 @@
 
 ### 4.3 Результаты
 - Основные методы (без GD и Newton):
-  - `fig/exp2_4_real_tasks_regression.png`
-  - `fig/exp2_4_real_tasks_classification.png`
+  - ![](../fig/exp2_4_real_tasks_regression.png)
+  - ![](../fig/exp2_4_real_tasks_classification.png)
 - Отдельно GD:
-  - `fig/exp2_4_real_tasks_regression_gd.png`
-  - `fig/exp2_4_real_tasks_classification_gd.png`
+  - ![](../fig/exp2_4_real_tasks_regression_gd.png)
+  - ![](../fig/exp2_4_real_tasks_classification_gd.png)
 - Отдельно Newton:
-  - `fig/exp2_4_real_tasks_regression_newton.png`
-  - `fig/exp2_4_real_tasks_classification_newton.png`
+  - ![](../fig/exp2_4_real_tasks_regression_newton.png)
+  - ![](../fig/exp2_4_real_tasks_classification_newton.png)
   - `f(x_k)` vs iteration,
   - `f(x_k)` vs time,
   - `||∇f(x_k)||^2 / ||∇f(x_0)||^2` vs time (log-scale).
@@ -140,7 +144,7 @@
 - Используется одинаковый тип line search (Wolfe).
 
 ### 5.3 Результаты
-- Рисунок 2.5-1: `fig/exp2_5_microprofiling.png`
+- Рисунок 2.5-1: ![](../fig/exp2_5_microprofiling.png)
   - столбчатая диаграмма долей времени.
 
 ### 5.4 Выводы
@@ -164,8 +168,8 @@
   - регрессия: MSE (при необходимости MAE).
 
 ### 6.3 Результаты
-- Рисунок 2.6-1: `fig/exp2_6_opt_vs_quality_regression.png`
-- Рисунок 2.6-2: `fig/exp2_6_opt_vs_quality_classification.png`
+- Рисунок 2.6-1: ![](../fig/exp2_6_opt_vs_quality_regression.png)
+- Рисунок 2.6-2: ![](../fig/exp2_6_opt_vs_quality_classification.png)
   - левая ось: `f_train`, `||∇f||` (логарифмическая),
   - правая ось: test-метрика.
 
